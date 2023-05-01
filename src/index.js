@@ -1,3 +1,5 @@
+import axios from "axios";
+
 // 👉 TASK 1- Test out the following endpoints:
 
 //  https://dog.ceo/api/breeds/image/random
@@ -8,8 +10,8 @@
 
 // 👉 TASK 2- Select the "entry point", the element
 // inside of which we'll inject our dog cards 
-const entryPoint = null
-
+const entryPoint = document.querySelector(".entry");
+console.log(entryPoint);
 
 // 👉 TASK 3- `dogCardMaker` takes an object and returns a Dog Card.
 // Use this function to build a Card, and append it to the entry point.
@@ -21,14 +23,28 @@ function dogCardMaker({ imageURL, breed }) {
       <h3>
     </div>
   */
+ const dogCard = document.createElement("div");
+ const image = document.createElement("img");
+ const heading = document.createElement("h3");
   // set class names, attributes and text
-
+heading.textContent = `breed: ${breed}`;
+image.src = imageURL;
+image.classList.add("dog-image");
+dogCard.classList.add("dog-card");
   // create the hierarchy
+dogCard.appendChild(image);
+dogCard.appendChild(heading);
+console.log(dogCard);
 
   // add some interactivity
+dogCard.addEventListener("click", () => {
+dogCard.classList.toggle("selected");
+})
 
+return dogCard;
   // never forget to return!
 }
+
 
 
 // 👉 TASK 4- Bring the Axios library into the project using one of two methods:
@@ -40,6 +56,25 @@ function dogCardMaker({ imageURL, breed }) {
 //    * ON SUCCESS: use the data to create dogCards and append them to the entry point
 //    * ON FAILURE: log the error to the console
 //    * IN ANY CASE: log "done" to the console
+
+function getDogs(breed, count) {
+  axios.get(`https://dog.ceo/api/${breed}/image/random/${count}`)
+  .then(res => {
+    res.data.message.forEach(imageURL => {
+    const dogCard = dogCardMaker({ imageURL: res.data.message, breed:breed});
+    entryPoint.appendChild(dogCard);
+  })
+})
+  .catch(err => {
+    console.error(err);
+  })
+  .finally(() => console.log("OH MY GOD DONE!"));
+}
+
+document.querySelector("button").addEventListener("click", () =>{
+  getDogs("masdtiff", 3);
+  getDogs("appenzeller",3);
+})
 
 
 // 👉 (OPTIONAL) TASK 6- Wrap the fetching operation inside a function `getDogs`
